@@ -38,7 +38,7 @@ public class AuthControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.success").value(false))
             .andExpect(jsonPath("$.token").doesNotExist())
-            .andExpect(jsonPath("$.error").value("Authentication or token generation failed"));
+            .andExpect(jsonPath("$.error").value("Authentication or token generation failed."));
     }
 
     @Test
@@ -49,6 +49,6 @@ public class AuthControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.success").value(false))
             .andExpect(jsonPath("$.token").doesNotExist())
-            .andExpect(jsonPath("$.error").value("Authentication or token generation failed"));
+            .andExpect(jsonPath("$.error").value("Authentication or token generation failed."));
     }
 }

@@ -68,6 +68,14 @@ public class TokenOrchestratorActor extends AbstractBehavior<Object> {
     }
 
     private Behavior<Object> onIssueToken(IssueTokenCommand command) {
+        String username = command.username;
+
+        if (username != null && (username.toUpperCase().startsWith("A"))) {
+            getContext().getLog().info("Usuário {} começa com 'A', rejeitado imediatamente sem autenticação.", username);
+            command.replyTo.tell(new TokenResponse(null, false));
+            return Behaviors.same();
+        }        
+
         ActorRef<AuthResult> authResultHandler = getContext().spawnAnonymous(
             Behaviors.receiveMessage(authResult -> {
                 getContext().getSelf().tell(new WrappedAuthResult(authResult, command.replyTo));
