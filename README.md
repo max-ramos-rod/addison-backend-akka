@@ -59,7 +59,7 @@ mvn spring-boot:run
   ```
   **Expected Response**:
   ```json
-  {"success":true,"token":"house_2025-08-12T10:48:00Z","error":null}
+  {"success":true,"token":"house_2025-08-12T10:55:00Z","error":null}
   ```
 
 - **Invalid User ID** (username starting with 'A'):
@@ -88,4 +88,21 @@ mvn test
 
 ## Technical Decisions
 
-- **Akka Typed**: Chosen for its actor-based
+- **Akka Typed**: Chosen for its actor-based model, enabling concurrent, non-blocking token issuance with random delays (0-5000ms for authentication and token generation).
+- **Spring Boot**: Used for the REST API due to its simplicity, familiarity, and robust ecosystem, instead of Akka HTTP.
+- **SLF4J Conflict**: Resolved by removing `slf4j-simple` and using `logback-classic` (included in `spring-boot-starter-web`) for consistent logging.
+- **Character Encoding**: Configured Logback to use UTF-8 (`logback-spring.xml`) and set console encoding (`chcp 65001` on Windows) to correctly display special characters (e.g., `Autenticação`).
+- **Timeout**: Set to 10 seconds to accommodate maximum delays (5000ms for authentication + 5000ms for token generation).
+- **Testing**: Unit tests for `AuthController` ensure correct behavior for valid credentials, invalid credentials, and user IDs starting with 'A'.
+- **VSCode**: Used as the primary IDE, with `.gitignore` configured to exclude `.vscode/` settings.
+
+## Known Issues
+
+- Character encoding in logs may require `chcp 65001` on Windows or `logback-spring.xml` to display correctly.
+- Additional unit tests for `AuthActor` and `TokenActor` are planned but not yet implemented.
+
+## Future Improvements
+
+- Add unit tests for `AuthActor` and `TokenActor` using `akka-actor-testkit-typed`.
+- Implement a token validation endpoint.
+- Enhance logging with structured formats (e.g., JSON logging
