@@ -1,0 +1,24 @@
+# Maven
+target/
+*.log
+*.iml
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# IntelliJ IDEA (caso use em outro ambiente)
+.idea/
+*.ipr
+*.iws
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Outros
+*.DS_Store
+*.swp
+*.bak
+*.tmp
