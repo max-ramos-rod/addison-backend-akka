@@ -50,7 +50,8 @@ public class AuthActor extends AbstractBehavior<AuthRequest> {
         // O remetente da mensagem (quem enviou o AuthRequest)
         ActorRef<AuthResult> replyTo = request.replyTo;
         var log = getContext().getLog();
-        long delay = random.nextInt(5001); // Atraso aleatório de 0 a 5000ms
+        int maxDelay = getContext().getSystem().settings().config().getInt("app.auth-delay-max");
+        long delay = random.nextInt(maxDelay+1); // Atraso aleatório de 0 a 5000ms
         // Simula um processamento assíncrono com atraso
         getContext().getSystem().scheduler().scheduleOnce(
             java.time.Duration.ofMillis(delay),

@@ -22,7 +22,7 @@ public class SimpleAsyncTokenService {
         return AskPattern.ask(
                 actorSystem,
                 (ActorRef<TokenResponse> replyTo) -> new IssueTokenCommand(credentials.username, credentials.password, replyTo),
-                Duration.ofSeconds(5),
+                Duration.ofSeconds(10),
                 actorSystem.scheduler()
             )
             .thenApply(response -> {

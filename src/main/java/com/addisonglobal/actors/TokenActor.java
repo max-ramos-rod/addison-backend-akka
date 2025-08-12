@@ -52,7 +52,9 @@ public class TokenActor extends AbstractBehavior<TokenRequest> {
         // O remetente que espera a resposta
         ActorRef<TokenResult> replyTo = request.replyTo;
         var log = getContext().getLog();
-        long delay = random.nextInt(5001);
+        
+        int maxDelay = getContext().getSystem().settings().config().getInt("app.token-delay-max");
+        long delay = random.nextInt(maxDelay+1);
 
         getContext().getSystem().scheduler().scheduleOnce(
             java.time.Duration.ofMillis(delay),

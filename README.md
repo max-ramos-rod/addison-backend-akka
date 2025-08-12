@@ -139,6 +139,50 @@ mvn test
 - **Testing**: Unit tests for `AuthController`, `AuthActor`, and `TokenActor` ensure correct behavior for authentication, token generation, and error cases.
 - **VSCode**: Used as the primary IDE, with `.gitignore` excluding `.vscode/` settings.
 
+## Performance and Timing
+
+This section explains the timing behavior of the system, including artificial delays, timeouts, and how they differ between testing and production environments.
+
+### Simulated Delays in Actors
+
+To simulate real-world latency (e.g., network calls, database access), both `AuthActor` and `TokenActor` introduce **random delays** before responding:
+
+- **Authentication delay**: 0 to 5000 milliseconds
+- **Token generation delay**: 0 to 5000 milliseconds
+
+These delays are **intentional** to test resilience under latency and ensure the system handles timeouts gracefully.
+
+> Example: A full authentication + token generation flow may take up to **10 seconds** in the worst case.
+
+### Timeout Configuration
+
+The `AuthController` uses a **10-second timeout** when communicating with the `TokenOrchestratorActor` via Akka's `ask` pattern. This ensures:
+- The HTTP request does not hang indefinitely.
+- Clients receive a timely response even under high latency.
+
+If the actor system takes longer than 10 seconds, a `504 Gateway Timeout` is returned.
+
+### Behavior in Tests
+
+To ensure fast and reliable unit tests, the system uses different configurations:
+
+| Environment | Max Delay (Auth) | Max Delay (Token) | Timeout |
+|-----------|------------------|-------------------|--------|
+| **Production** | 5000 ms | 5000 ms | 10 s |
+| **Test** | 500 ms | 500 ms | 10 s |
+
+This is achieved using Akka configuration files:
+- `src/main/resources/application.conf` → production values
+- `src/test/resources/application-test.conf` → test values
+
+As a result, tests run quickly (typically under 1 second per case) while maintaining the same business logic.
+
+### Why These Values?
+
+- **5000ms max delay**: Simulates worst-case external service response.
+- **10s timeout**: Conservative upper bound for two sequential 5s operations.
+- **Reduced test delays**: Improves feedback speed during development without sacrificing correctness.
+
 ## Known Issues
 
 - Character encoding in logs may require `chcp 65001` on Windows or `logback-spring.xml` to display correctly.
