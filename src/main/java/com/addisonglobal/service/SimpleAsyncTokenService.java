@@ -5,7 +5,6 @@ import akka.actor.typed.ActorSystem;
 import akka.actor.typed.javadsl.AskPattern;
 import com.addisonglobal.messages.Credentials;
 import com.addisonglobal.messages.IssueTokenCommand;
-import com.addisonglobal.messages.IssueTokenResponse;
 import com.addisonglobal.messages.TokenResponse;
 import com.addisonglobal.messages.UserToken;
 
