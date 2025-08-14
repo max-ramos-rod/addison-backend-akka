@@ -55,8 +55,9 @@ addison-backend-akka
 ```
 
 ### Interfaces
-- **`SyncTokenService`**: Defines a synchronous contract for token issuance, with a method `issueToken(Credentials credentials)` that returns a `UserToken`. This interface ensures a clear API for synchronous token generation, though it’s not used directly in the final implementation due to the asynchronous requirement.
-- **`AsyncTokenService`**: Defines an asynchronous contract with `issueTokenAsync(Credentials credentials, Consumer<UserToken> onSuccess, Consumer<String> onFailure)`. It supports non-blocking token issuance, integrated with Akka actors to handle asynchronous processing and random delays (0-5000ms). The `SimpleAsyncTokenService` implements this interface, coordinating with `AuthActor` and `TokenActor` via `TokenOrchestratorActor`.
+- **`SyncTokenService`**: Defines a synchronous contract for token issuance, with a method `issueToken(Credentials credentials)` that returns a `UserToken`. This interface is provided for completeness but is not used in the current implementation.
+
+- **`AsyncTokenService`**: Defines an asynchronous contract with `requestToken(Credentials credentials)` returning a `CompletableFuture<UserToken>`. The `SimpleAsyncTokenService` implements this interface by delegating to the `TokenOrchestratorActor` via Akka's `ask` pattern, enabling non-blocking, resilient token issuance.
 
 ## Requirements
 
@@ -139,9 +140,14 @@ mvn test
 - **Testing**: Unit tests for `AuthController`, `AuthActor`, and `TokenActor` ensure correct behavior for authentication, token generation, and error cases.
 - **VSCode**: Used as the primary IDE, with `.gitignore` excluding `.vscode/` settings.
 
+## Arquitetura
+
+O serviço `SimpleAsyncTokenService` implementa `requestToken` coordenando um fluxo orquestrado pelo `TokenOrchestratorActor`, conforme requisitado no desafio. O uso de Akka Typed permite concorrência, não-bloqueio e resiliência, enquanto o Spring Boot expõe uma API REST simples e testável.
+
 ## Performance and Timing
 
 This section explains the timing behavior of the system, including artificial delays, timeouts, and how they differ between testing and production environments.
+
 
 ### Simulated Delays in Actors
 
